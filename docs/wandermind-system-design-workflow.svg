@@ -1,0 +1,264 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1280" viewBox="0 0 1800 1280" role="img" aria-labelledby="title desc">
+  <title id="title">WanderMind System Design and Completed Workflow</title>
+  <desc id="desc">Architecture and end-to-end flow for WanderMind including frontend, backend APIs, data stores, external providers, and lifecycle from authentication to itinerary persistence.</desc>
+
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fdf9f0" />
+      <stop offset="55%" stop-color="#f7eedf" />
+      <stop offset="100%" stop-color="#efe3cf" />
+    </linearGradient>
+
+    <linearGradient id="frontendGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffdf8" />
+      <stop offset="100%" stop-color="#fff2da" />
+    </linearGradient>
+
+    <linearGradient id="backendGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7fff8" />
+      <stop offset="100%" stop-color="#e7f7ec" />
+    </linearGradient>
+
+    <linearGradient id="dataGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f6fbff" />
+      <stop offset="100%" stop-color="#eaf4ff" />
+    </linearGradient>
+
+    <linearGradient id="workflowGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fff7e5" />
+      <stop offset="100%" stop-color="#e9f8ef" />
+    </linearGradient>
+
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#8d7a59" flood-opacity="0.22" />
+    </filter>
+
+    <marker id="arrowHead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,4 L0,8 z" fill="#6e5a37" />
+    </marker>
+
+    <style>
+      .title { font: 700 38px 'Segoe UI', Arial, sans-serif; fill: #2d2417; }
+      .subtitle { font: 500 18px 'Segoe UI', Arial, sans-serif; fill: #5f4a2a; }
+      .sectionTitle { font: 700 24px 'Segoe UI', Arial, sans-serif; fill: #2f2516; }
+      .boxTitle { font: 700 16px 'Segoe UI', Arial, sans-serif; fill: #2c2418; }
+      .boxText { font: 500 13px 'Segoe UI', Arial, sans-serif; fill: #4d3f2a; }
+      .chip { font: 600 12px 'Segoe UI', Arial, sans-serif; fill: #5a4527; }
+      .stepNum { font: 700 15px 'Segoe UI', Arial, sans-serif; fill: #ffffff; }
+      .stepTitle { font: 700 15px 'Segoe UI', Arial, sans-serif; fill: #2d2417; }
+      .stepText { font: 500 12px 'Segoe UI', Arial, sans-serif; fill: #4e3f2a; }
+      .legendText { font: 600 12px 'Segoe UI', Arial, sans-serif; fill: #4d3e29; }
+      .link { stroke: #6e5a37; stroke-width: 2.2; fill: none; marker-end: url(#arrowHead); }
+      .linkSoft { stroke: #8f7a53; stroke-width: 1.8; fill: none; marker-end: url(#arrowHead); stroke-dasharray: 5 4; }
+      .panelStroke { stroke: #b89d6f; stroke-width: 1.5; }
+      .innerStroke { stroke: #c8b38d; stroke-width: 1.2; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1800" height="1280" fill="url(#bgGrad)" />
+
+  <text class="title" x="900" y="58" text-anchor="middle">WanderMind: System Design + Completed Workflow</text>
+  <text class="subtitle" x="900" y="90" text-anchor="middle">Authenticated AI travel planning with PostgreSQL persistence, SSE streaming, RAG indexing, and account lifecycle support</text>
+
+  <!-- Architecture Container -->
+  <rect x="40" y="120" width="1720" height="680" rx="24" fill="#fffaf0" class="panelStroke" filter="url(#softShadow)" />
+  <text class="sectionTitle" x="70" y="158">A. Runtime Architecture</text>
+
+  <!-- Frontend Panel -->
+  <rect x="70" y="180" width="510" height="590" rx="20" fill="url(#frontendGrad)" class="panelStroke" />
+  <text class="sectionTitle" x="95" y="218">Frontend (React + Vite)</text>
+
+  <rect x="95" y="240" width="460" height="92" rx="14" fill="#fff9eb" class="innerStroke" />
+  <text class="boxTitle" x="112" y="265">Auth UI</text>
+  <text class="boxText" x="112" y="286">Register, Login, Session Restore</text>
+  <text class="chip" x="112" y="307">stores JWT in localStorage</text>
+
+  <rect x="95" y="350" width="460" height="100" rx="14" fill="#fff9eb" class="innerStroke" />
+  <text class="boxTitle" x="112" y="376">Itinerary Workspace</text>
+  <text class="boxText" x="112" y="397">Input form + SSE progress visualization</text>
+  <text class="chip" x="112" y="418">POST /api/generate-itinerary (Bearer)</text>
+
+  <rect x="95" y="468" width="460" height="100" rx="14" fill="#fff9eb" class="innerStroke" />
+  <text class="boxTitle" x="112" y="494">History Sidebar</text>
+  <text class="boxText" x="112" y="515">Load previous itineraries, delete one, clear all</text>
+  <text class="chip" x="112" y="536">GET /api/itineraries, DELETE /api/itineraries</text>
+
+  <rect x="95" y="586" width="460" height="160" rx="14" fill="#fff9eb" class="innerStroke" />
+  <text class="boxTitle" x="112" y="612">User Account Actions</text>
+  <text class="boxText" x="112" y="633">Logout, Export PDF, Delete Account</text>
+  <text class="chip" x="112" y="654">DELETE /api/auth/me (password confirmation)</text>
+  <text class="chip" x="112" y="675">POST /api/export-pdf</text>
+  <text class="boxText" x="112" y="701">On deletion: clear token, local state, and history view</text>
+
+  <!-- Backend Panel -->
+  <rect x="645" y="180" width="510" height="590" rx="20" fill="url(#backendGrad)" class="panelStroke" />
+  <text class="sectionTitle" x="670" y="218">Backend (FastAPI)</text>
+
+  <rect x="670" y="240" width="460" height="84" rx="14" fill="#f2fff5" class="innerStroke" />
+  <text class="boxTitle" x="687" y="265">Auth APIs</text>
+  <text class="boxText" x="687" y="286">/api/auth/register, /login, /me, DELETE /me</text>
+
+  <rect x="670" y="338" width="460" height="84" rx="14" fill="#f2fff5" class="innerStroke" />
+  <text class="boxTitle" x="687" y="363">Itinerary APIs</text>
+  <text class="boxText" x="687" y="384">/api/itineraries (GET, DELETE single/all)</text>
+
+  <rect x="670" y="436" width="460" height="112" rx="14" fill="#f2fff5" class="innerStroke" />
+  <text class="boxTitle" x="687" y="461">Generation Orchestrator (SSE)</text>
+  <text class="boxText" x="687" y="482">Build/load KB, verification, retrieval, generation</text>
+  <text class="chip" x="687" y="503">streams progress + final result over text/event-stream</text>
+  <text class="chip" x="687" y="524">saves itinerary to SQL before returning result</text>
+
+  <rect x="670" y="564" width="222" height="182" rx="14" fill="#f2fff5" class="innerStroke" />
+  <text class="boxTitle" x="687" y="590">RAG Services</text>
+  <text class="boxText" x="687" y="611">Text Summarizer</text>
+  <text class="boxText" x="687" y="632">Embedding Service</text>
+  <text class="boxText" x="687" y="653">FAISS Query Processor</text>
+  <text class="boxText" x="687" y="674">Verification Engine</text>
+
+  <rect x="908" y="564" width="222" height="182" rx="14" fill="#f2fff5" class="innerStroke" />
+  <text class="boxTitle" x="925" y="590">Output Services</text>
+  <text class="boxText" x="925" y="611">Itinerary Generator (Groq)</text>
+  <text class="boxText" x="925" y="632">Assembler + Normalizer</text>
+  <text class="boxText" x="925" y="653">PDF Exporter</text>
+  <text class="boxText" x="925" y="674">Error handling + fallback</text>
+
+  <!-- Data and Providers Panel -->
+  <rect x="1220" y="180" width="510" height="590" rx="20" fill="url(#dataGrad)" class="panelStroke" />
+  <text class="sectionTitle" x="1245" y="218">Data Stores + External Providers</text>
+
+  <rect x="1245" y="240" width="460" height="108" rx="14" fill="#f3f9ff" class="innerStroke" />
+  <text class="boxTitle" x="1262" y="266">PostgreSQL</text>
+  <text class="boxText" x="1262" y="287">users(id, email, password_hash, created_at)</text>
+  <text class="boxText" x="1262" y="308">itineraries(user_id, itinerary_data JSON, metadata)</text>
+  <text class="chip" x="1262" y="329">cascade deletion on account removal</text>
+
+  <rect x="1245" y="366" width="460" height="100" rx="14" fill="#f3f9ff" class="innerStroke" />
+  <text class="boxTitle" x="1262" y="392">FAISS Index Storage</text>
+  <text class="boxText" x="1262" y="413">destination-specific vector index + metadata</text>
+  <text class="chip" x="1262" y="434">used for retrieval augmented generation</text>
+
+  <rect x="1245" y="484" width="220" height="120" rx="14" fill="#f3f9ff" class="innerStroke" />
+  <text class="boxTitle" x="1262" y="510">Content Sources</text>
+  <text class="boxText" x="1262" y="531">YouTube transcripts</text>
+  <text class="boxText" x="1262" y="552">Reddit threads</text>
+  <text class="boxText" x="1262" y="573">Quora pages</text>
+
+  <rect x="1485" y="484" width="220" height="120" rx="14" fill="#f3f9ff" class="innerStroke" />
+  <text class="boxTitle" x="1502" y="510">AI + Search</text>
+  <text class="boxText" x="1502" y="531">Groq LLM API</text>
+  <text class="boxText" x="1502" y="552">Tavily Web Search</text>
+  <text class="boxText" x="1502" y="573">Sentence Transformer</text>
+
+  <rect x="1245" y="622" width="460" height="124" rx="14" fill="#f3f9ff" class="innerStroke" />
+  <text class="boxTitle" x="1262" y="648">Persistence Behavior</text>
+  <text class="boxText" x="1262" y="669">1) Authenticated generate request completes pipeline</text>
+  <text class="boxText" x="1262" y="690">2) Final itinerary persisted in SQL</text>
+  <text class="boxText" x="1262" y="711">3) Frontend history hydrates from SQL on login/session restore</text>
+
+  <!-- Key Architecture Links -->
+  <path class="link" d="M555 285 C615 285, 615 282, 670 282" />
+  <path class="link" d="M555 401 C615 401, 615 478, 670 478" />
+  <path class="link" d="M555 518 C615 518, 615 380, 670 380" />
+  <path class="link" d="M555 664 C615 664, 615 282, 670 282" />
+
+  <path class="link" d="M1130 282 C1180 282, 1180 294, 1245 294" />
+  <path class="link" d="M1130 380 C1180 380, 1180 294, 1245 294" />
+  <path class="link" d="M1130 478 C1180 478, 1180 548, 1245 548" />
+  <path class="link" d="M1130 478 C1180 478, 1180 420, 1245 420" />
+  <path class="link" d="M1130 610 C1180 610, 1180 548, 1245 548" />
+  <path class="link" d="M1130 650 C1180 650, 1180 548, 1245 548" />
+  <path class="link" d="M1130 610 C1180 610, 1180 665, 1245 665" />
+
+  <path class="linkSoft" d="M1465 548 C1480 548, 1480 548, 1485 548" />
+  <path class="linkSoft" d="M1595 604 C1595 620, 1540 620, 1540 622" />
+
+  <!-- Workflow Container -->
+  <rect x="40" y="830" width="1720" height="410" rx="24" fill="url(#workflowGrad)" class="panelStroke" filter="url(#softShadow)" />
+  <text class="sectionTitle" x="70" y="868">B. Completed Workflow (Current Implementation)</text>
+
+  <line x1="120" y1="965" x2="1680" y2="965" stroke="#a78854" stroke-width="3" stroke-linecap="round" />
+
+  <!-- Steps -->
+  <g>
+    <circle cx="140" cy="965" r="20" fill="#b08843" /><text class="stepNum" x="140" y="970" text-anchor="middle">1</text>
+    <rect x="90" y="895" width="200" height="58" rx="10" fill="#fff" class="innerStroke" />
+    <text class="stepTitle" x="100" y="916">Register / Login</text>
+    <text class="stepText" x="100" y="935">JWT token issued</text>
+  </g>
+
+  <g>
+    <circle cx="300" cy="965" r="20" fill="#b08843" /><text class="stepNum" x="300" y="970" text-anchor="middle">2</text>
+    <rect x="250" y="980" width="200" height="58" rx="10" fill="#fff" class="innerStroke" />
+    <text class="stepTitle" x="260" y="1001">Session Bootstrap</text>
+    <text class="stepText" x="260" y="1020">load /me + /itineraries</text>
+  </g>
+
+  <g>
+    <circle cx="460" cy="965" r="20" fill="#b08843" /><text class="stepNum" x="460" y="970" text-anchor="middle">3</text>
+    <rect x="410" y="895" width="200" height="58" rx="10" fill="#fff" class="innerStroke" />
+    <text class="stepTitle" x="420" y="916">Trip Input</text>
+    <text class="stepText" x="420" y="935">destination + style + days</text>
+  </g>
+
+  <g>
+    <circle cx="620" cy="965" r="20" fill="#b08843" /><text class="stepNum" x="620" y="970" text-anchor="middle">4</text>
+    <rect x="570" y="980" width="200" height="58" rx="10" fill="#fff" class="innerStroke" />
+    <text class="stepTitle" x="580" y="1001">SSE Start</text>
+    <text class="stepText" x="580" y="1020">Bearer-auth stream request</text>
+  </g>
+
+  <g>
+    <circle cx="780" cy="965" r="20" fill="#b08843" /><text class="stepNum" x="780" y="970" text-anchor="middle">5</text>
+    <rect x="730" y="895" width="200" height="58" rx="10" fill="#fff" class="innerStroke" />
+    <text class="stepTitle" x="740" y="916">Source Collection</text>
+    <text class="stepText" x="740" y="935">YouTube + Reddit + Quora</text>
+  </g>
+
+  <g>
+    <circle cx="940" cy="965" r="20" fill="#b08843" /><text class="stepNum" x="940" y="970" text-anchor="middle">6</text>
+    <rect x="890" y="980" width="200" height="58" rx="10" fill="#fff" class="innerStroke" />
+    <text class="stepTitle" x="900" y="1001">RAG Build / Retrieve</text>
+    <text class="stepText" x="900" y="1020">summaries + embeddings + FAISS</text>
+  </g>
+
+  <g>
+    <circle cx="1100" cy="965" r="20" fill="#b08843" /><text class="stepNum" x="1100" y="970" text-anchor="middle">7</text>
+    <rect x="1050" y="895" width="200" height="58" rx="10" fill="#fff" class="innerStroke" />
+    <text class="stepTitle" x="1060" y="916">LLM Generation</text>
+    <text class="stepText" x="1060" y="935">itinerary + hotels + tips</text>
+  </g>
+
+  <g>
+    <circle cx="1260" cy="965" r="20" fill="#b08843" /><text class="stepNum" x="1260" y="970" text-anchor="middle">8</text>
+    <rect x="1210" y="980" width="200" height="58" rx="10" fill="#fff" class="innerStroke" />
+    <text class="stepTitle" x="1220" y="1001">Assembly + Normalize</text>
+    <text class="stepText" x="1220" y="1020">complete structured response</text>
+  </g>
+
+  <g>
+    <circle cx="1420" cy="965" r="20" fill="#b08843" /><text class="stepNum" x="1420" y="970" text-anchor="middle">9</text>
+    <rect x="1370" y="895" width="200" height="58" rx="10" fill="#fff" class="innerStroke" />
+    <text class="stepTitle" x="1380" y="916">Persist + Stream Result</text>
+    <text class="stepText" x="1380" y="935">save to SQL, emit SSE result</text>
+  </g>
+
+  <g>
+    <circle cx="1580" cy="965" r="20" fill="#b08843" /><text class="stepNum" x="1580" y="970" text-anchor="middle">10</text>
+    <rect x="1530" y="980" width="200" height="58" rx="10" fill="#fff" class="innerStroke" />
+    <text class="stepTitle" x="1540" y="1001">Account Lifecycle</text>
+    <text class="stepText" x="1540" y="1020">history sync, export, delete account</text>
+  </g>
+
+  <!-- Legend -->
+  <rect x="70" y="1085" width="1660" height="130" rx="16" fill="#fff9ec" class="innerStroke" />
+  <text class="sectionTitle" x="95" y="1117" font-size="18">Legend + Operational Notes</text>
+
+  <line x1="100" y1="1145" x2="160" y2="1145" class="link" />
+  <text class="legendText" x="170" y="1150">Synchronous control/data flow</text>
+
+  <line x1="450" y1="1145" x2="510" y2="1145" class="linkSoft" />
+  <text class="legendText" x="520" y="1150">Fallback/auxiliary flow</text>
+
+  <text class="legendText" x="860" y="1150">SSE keeps UI updated during long stage-1 ingestion with heartbeat progress events.</text>
+  <text class="legendText" x="100" y="1180">First run for a new destination can be slower while KB is built; subsequent runs use FAISS cache and are faster.</text>
+</svg>

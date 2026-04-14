@@ -16,7 +16,17 @@ from db import get_db, init_db
 from generation.assembler import assemble_final_itinerary
 from generation.itinerary_generator import ItineraryGenerator
 from generation.pdf_exporter import build_itinerary_pdf
-from models.db_models import StoredItinerary, User
+from models.db_models import (
+    ItineraryBudgetItem,
+    ItineraryDayPlan,
+    ItineraryHiddenGem,
+    ItineraryHotelOption,
+    ItineraryMustEatItem,
+    ItineraryTextNote,
+    ItineraryWarning,
+    StoredItinerary,
+    User,
+)
 from models.schemas import (
     AuthRequest,
     AuthResponse,
@@ -136,6 +146,126 @@ def _user_profile(user: User) -> UserProfile:
     return UserProfile(id=user.id, email=user.email, created_at=user.created_at)
 
 
+def _safe_json_dict(value: Any) -> Dict[str, Any]:
+    return value if isinstance(value, dict) else {}
+
+
+def _safe_json_list(value: Any) -> List[Any]:
+    return value if isinstance(value, list) else []
+
+
+def _persist_itinerary_breakdown(db: Session, itinerary_id: int, payload: Dict[str, Any]) -> None:
+    for idx, day in enumerate(_safe_json_list(payload.get("itinerary")), start=1):
+        day_obj = _safe_json_dict(day)
+        try:
+            day_number = int(day_obj.get("day", idx))
+        except Exception:
+            day_number = idx
+
+        db.add(
+            ItineraryDayPlan(
+                itinerary_id=itinerary_id,
+                day_number=day_number,
+                theme=str(day_obj.get("theme") or f"Day {day_number}"),
+                morning=_safe_json_dict(day_obj.get("morning")),
+                afternoon=_safe_json_dict(day_obj.get("afternoon")),
+                evening=_safe_json_dict(day_obj.get("evening")),
+                night=_safe_json_dict(day_obj.get("night")),
+                day_notes=str(day_obj.get("day_notes") or ""),
+                travel_times=_safe_json_list(day_obj.get("travel_times")),
+                opening_hours_warnings=[str(x) for x in _safe_json_list(day_obj.get("opening_hours_warnings"))],
+            )
+        )
+
+    hotels = _safe_json_dict(payload.get("hotels"))
+    for tier in ("budget", "mid_range", "luxury"):
+        for hotel in _safe_json_list(hotels.get(tier)):
+            hotel_obj = _safe_json_dict(hotel)
+            db.add(
+                ItineraryHotelOption(
+                    itinerary_id=itinerary_id,
+                    tier=tier,
+                    name=str(hotel_obj.get("name") or ""),
+                    area=str(hotel_obj.get("area") or ""),
+                    est_cost_per_night_inr=str(hotel_obj.get("est_cost_per_night_inr") or ""),
+                    pros=str(hotel_obj.get("pros") or ""),
+                    cons=str(hotel_obj.get("cons") or ""),
+                    best_for=str(hotel_obj.get("best_for") or ""),
+                )
+            )
+
+    for item in _safe_json_list(payload.get("hidden_gems")):
+        gem = _safe_json_dict(item)
+        db.add(
+            ItineraryHiddenGem(
+                itinerary_id=itinerary_id,
+                name=str(gem.get("name") or ""),
+                why_special=str(gem.get("why_special") or ""),
+                how_to_get_there=str(gem.get("how_to_get_there") or ""),
+            )
+        )
+
+    for item in _safe_json_list(payload.get("warnings")):
+        warning = _safe_json_dict(item)
+        db.add(
+            ItineraryWarning(
+                itinerary_id=itinerary_id,
+                issue=str(warning.get("issue") or ""),
+                advice=str(warning.get("advice") or ""),
+            )
+        )
+
+    for item in _safe_json_list(payload.get("must_eat")):
+        food = _safe_json_dict(item)
+        db.add(
+            ItineraryMustEatItem(
+                itinerary_id=itinerary_id,
+                dish=str(food.get("dish") or ""),
+                where_to_find=str(food.get("where_to_find") or ""),
+                approx_cost=str(food.get("approx_cost") or ""),
+            )
+        )
+
+    for idx, text in enumerate(_safe_json_list(payload.get("cultural_tips")), start=1):
+        db.add(
+            ItineraryTextNote(
+                itinerary_id=itinerary_id,
+                note_type="cultural_tip",
+                note_text=str(text),
+                order_index=idx,
+            )
+        )
+
+    for idx, text in enumerate(_safe_json_list(payload.get("packing")), start=1):
+        db.add(
+            ItineraryTextNote(
+                itinerary_id=itinerary_id,
+                note_type="packing",
+                note_text=str(text),
+                order_index=idx,
+            )
+        )
+
+    for idx, text in enumerate(_safe_json_list(payload.get("notices")), start=1):
+        db.add(
+            ItineraryTextNote(
+                itinerary_id=itinerary_id,
+                note_type="notice",
+                note_text=str(text),
+                order_index=idx,
+            )
+        )
+
+    for key, value in _safe_json_dict(payload.get("budget_breakdown")).items():
+        db.add(
+            ItineraryBudgetItem(
+                itinerary_id=itinerary_id,
+                item_key=str(key),
+                item_value=str(value),
+            )
+        )
+
+
 def _persist_generated_itinerary(
     db: Session,
     user: User,
@@ -158,6 +288,8 @@ def _persist_generated_itinerary(
         generated_at=generated_at,
     )
     db.add(row)
+    db.flush()
+    _persist_itinerary_breakdown(db=db, itinerary_id=row.id, payload=itinerary_payload)
     db.commit()
     db.refresh(row)
     return row

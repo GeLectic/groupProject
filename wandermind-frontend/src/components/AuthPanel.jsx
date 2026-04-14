@@ -46,7 +46,7 @@ export default function AuthPanel({ loading, error, onLogin, onRegister }) {
         <p className="mb-2 flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-gold/75">
           <ShieldCheck size={14} /> Secure Access
         </p>
-        <h2 className="font-display text-3xl text-parchment">Sign In To Save Trips In PostgreSQL</h2>
+        <h2 className="font-display text-3xl text-parchment">Sign In To Your Account</h2>
         <p className="mt-2 text-sm text-parchment/70">
           Your generated itineraries are attached to your account and available in the sidebar on future sessions.
         </p>

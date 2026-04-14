@@ -1,0 +1,94 @@
+erDiagram
+    USERS ||--o{ ITINERARIES : owns
+    ITINERARIES ||--o{ ITINERARY_DAYS : has
+    ITINERARIES ||--o{ ITINERARY_HOTELS : has
+    ITINERARIES ||--o{ ITINERARY_HIDDEN_GEMS : has
+    ITINERARIES ||--o{ ITINERARY_WARNINGS : has
+    ITINERARIES ||--o{ ITINERARY_MUST_EAT_ITEMS : has
+    ITINERARIES ||--o{ ITINERARY_TEXT_NOTES : has
+    ITINERARIES ||--o{ ITINERARY_BUDGET_ITEMS : has
+
+    USERS {
+        INT id PK
+        VARCHAR_320 email UK
+        VARCHAR_255 password_hash
+        TIMESTAMPTZ created_at
+    }
+
+    ITINERARIES {
+        INT id PK
+        INT user_id FK
+        VARCHAR_200 destination
+        INT days
+        VARCHAR_50 month
+        VARCHAR_40 budget_level
+        VARCHAR_40 travel_style
+        JSON itinerary_data
+        TIMESTAMPTZ generated_at
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+
+    ITINERARY_DAYS {
+        INT id PK
+        INT itinerary_id FK
+        INT day_number
+        VARCHAR_200 theme
+        JSON morning
+        JSON afternoon
+        JSON evening
+        JSON night
+        TEXT day_notes
+        JSON travel_times
+        JSON opening_hours_warnings
+    }
+
+    ITINERARY_HOTELS {
+        INT id PK
+        INT itinerary_id FK
+        VARCHAR_20 tier
+        VARCHAR_200 name
+        VARCHAR_200 area
+        VARCHAR_80 est_cost_per_night_inr
+        TEXT pros
+        TEXT cons
+        VARCHAR_120 best_for
+    }
+
+    ITINERARY_HIDDEN_GEMS {
+        INT id PK
+        INT itinerary_id FK
+        VARCHAR_200 name
+        TEXT why_special
+        TEXT how_to_get_there
+    }
+
+    ITINERARY_WARNINGS {
+        INT id PK
+        INT itinerary_id FK
+        VARCHAR_200 issue
+        TEXT advice
+    }
+
+    ITINERARY_MUST_EAT_ITEMS {
+        INT id PK
+        INT itinerary_id FK
+        VARCHAR_200 dish
+        TEXT where_to_find
+        VARCHAR_120 approx_cost
+    }
+
+    ITINERARY_TEXT_NOTES {
+        INT id PK
+        INT itinerary_id FK
+        VARCHAR_40 note_type
+        TEXT note_text
+        INT order_index
+    }
+
+    ITINERARY_BUDGET_ITEMS {
+        INT id PK
+        INT itinerary_id FK
+        VARCHAR_120 item_key
+        VARCHAR_255 item_value
+    }

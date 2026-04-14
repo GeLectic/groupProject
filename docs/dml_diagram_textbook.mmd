@@ -1,0 +1,50 @@
+flowchart LR
+    T_USERS[(users)]
+    T_ITIN[(itineraries)]
+    T_DAYS[(itinerary_days)]
+    T_HOTELS[(itinerary_hotels)]
+    T_GEMS[(itinerary_hidden_gems)]
+    T_WARN[(itinerary_warnings)]
+    T_EAT[(itinerary_must_eat_items)]
+    T_NOTES[(itinerary_text_notes)]
+    T_BUDGET[(itinerary_budget_items)]
+
+    OP_REG[Register User]
+    OP_LOGIN[Login User]
+    OP_GEN[Generate Itinerary]
+    OP_NORM[Normalize and Persist Breakdown]
+    OP_LIST[List History]
+    OP_VIEW[View One Itinerary]
+    OP_DEL[Delete One Itinerary]
+    OP_CLEAR[Clear Itinerary History]
+    OP_ACC_DEL[Delete Account]
+
+    OP_REG -->|INSERT users| T_USERS
+    OP_LOGIN -->|SELECT users by email| T_USERS
+
+    OP_GEN -->|INSERT itineraries| T_ITIN
+    OP_GEN --> OP_NORM
+    OP_NORM -->|INSERT day rows| T_DAYS
+    OP_NORM -->|INSERT hotel rows| T_HOTELS
+    OP_NORM -->|INSERT hidden gems| T_GEMS
+    OP_NORM -->|INSERT warnings| T_WARN
+    OP_NORM -->|INSERT must-eat rows| T_EAT
+    OP_NORM -->|INSERT text notes| T_NOTES
+    OP_NORM -->|INSERT budget rows| T_BUDGET
+
+    OP_LIST -->|SELECT itineraries by user_id| T_ITIN
+
+    OP_VIEW -->|SELECT itinerary by id and user_id| T_ITIN
+    OP_VIEW -->|SELECT by itinerary_id| T_DAYS
+    OP_VIEW -->|SELECT by itinerary_id| T_HOTELS
+    OP_VIEW -->|SELECT by itinerary_id| T_GEMS
+    OP_VIEW -->|SELECT by itinerary_id| T_WARN
+    OP_VIEW -->|SELECT by itinerary_id| T_EAT
+    OP_VIEW -->|SELECT by itinerary_id| T_NOTES
+    OP_VIEW -->|SELECT by itinerary_id| T_BUDGET
+
+    OP_DEL -->|DELETE itinerary by id and user_id| T_ITIN
+    OP_CLEAR -->|DELETE itineraries by user_id| T_ITIN
+
+    OP_ACC_DEL -->|DELETE itineraries by user_id cascade| T_ITIN
+    OP_ACC_DEL -->|DELETE user by id| T_USERS

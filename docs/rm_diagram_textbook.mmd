@@ -1,0 +1,81 @@
+classDiagram
+    class USERS {
+        +id : INTEGER <<PK>>
+        +email : VARCHAR(320) <<UK, NN>>
+        +password_hash : VARCHAR(255) <<NN>>
+        +created_at : TIMESTAMPTZ <<NN>>
+    }
+
+    class ITINERARIES {
+        +id : INTEGER <<PK>>
+        +user_id : INTEGER <<FK, NN>>
+        +destination : VARCHAR(200) <<NN>>
+        +days : INTEGER <<NN>>
+        +month : VARCHAR(50) <<NN>>
+        +budget_level : VARCHAR(40) <<NN>>
+        +travel_style : VARCHAR(40) <<NN>>
+        +itinerary_data : JSON <<NN>>
+        +generated_at : TIMESTAMPTZ <<NN>>
+        +created_at : TIMESTAMPTZ <<NN>>
+        +updated_at : TIMESTAMPTZ <<NN>>
+    }
+
+    class ITINERARY_DAYS {
+        +id : INTEGER <<PK>>
+        +itinerary_id : INTEGER <<FK, NN>>
+        +day_number : INTEGER <<NN>>
+        +theme : VARCHAR(200) <<NN>>
+        +morning : JSON <<NN>>
+        +afternoon : JSON <<NN>>
+        +evening : JSON <<NN>>
+        +night : JSON <<NN>>
+    }
+
+    class ITINERARY_HOTELS {
+        +id : INTEGER <<PK>>
+        +itinerary_id : INTEGER <<FK, NN>>
+        +tier : VARCHAR(20) <<NN>>
+        +name : VARCHAR(200) <<NN>>
+        +area : VARCHAR(200) <<NN>>
+    }
+
+    class ITINERARY_HIDDEN_GEMS {
+        +id : INTEGER <<PK>>
+        +itinerary_id : INTEGER <<FK, NN>>
+        +name : VARCHAR(200) <<NN>>
+    }
+
+    class ITINERARY_WARNINGS {
+        +id : INTEGER <<PK>>
+        +itinerary_id : INTEGER <<FK, NN>>
+        +issue : VARCHAR(200) <<NN>>
+    }
+
+    class ITINERARY_MUST_EAT_ITEMS {
+        +id : INTEGER <<PK>>
+        +itinerary_id : INTEGER <<FK, NN>>
+        +dish : VARCHAR(200) <<NN>>
+    }
+
+    class ITINERARY_TEXT_NOTES {
+        +id : INTEGER <<PK>>
+        +itinerary_id : INTEGER <<FK, NN>>
+        +note_type : VARCHAR(40) <<NN>>
+        +order_index : INTEGER <<NN>>
+    }
+
+    class ITINERARY_BUDGET_ITEMS {
+        +id : INTEGER <<PK>>
+        +itinerary_id : INTEGER <<FK, NN>>
+        +item_key : VARCHAR(120) <<NN>>
+        +item_value : VARCHAR(255) <<NN>>
+    }
+
+    USERS "1" --> "0..*" ITINERARIES : user_id
+    ITINERARIES "1" --> "0..*" ITINERARY_DAYS : itinerary_id
+    ITINERARIES "1" --> "0..*" ITINERARY_HOTELS : itinerary_id
+    ITINERARIES "1" --> "0..*" ITINERARY_HIDDEN_GEMS : itinerary_id
+    ITINERARIES "1" --> "0..*" ITINERARY_WARNINGS : itinerary_id
+    ITINERARIES "1" --> "0..*" ITINERARY_MUST_EAT_ITEMS : itinerary_id
+    ITINERARIES "1" --> "0..*" ITINERARY_TEXT_NOTES : itinerary_id
+    ITINERARIES "1" --> "0..*" ITINERARY_BUDGET_ITEMS : itinerary_id

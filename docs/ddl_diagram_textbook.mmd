@@ -1,0 +1,29 @@
+flowchart TB
+    A[CREATE TABLE users]
+    B[CREATE TABLE itineraries]
+    C[CREATE TABLE itinerary_days]
+    D[CREATE TABLE itinerary_hotels]
+    E[CREATE TABLE itinerary_hidden_gems]
+    F[CREATE TABLE itinerary_warnings]
+    G[CREATE TABLE itinerary_must_eat_items]
+    H[CREATE TABLE itinerary_text_notes]
+    I[CREATE TABLE itinerary_budget_items]
+    J[CREATE INDEX and UNIQUE constraints]
+
+    A --> B
+    B --> C
+    B --> D
+    B --> E
+    B --> F
+    B --> G
+    B --> H
+    B --> I
+    A --> J
+    B --> J
+    C --> J
+    D --> J
+    E --> J
+    F --> J
+    G --> J
+    H --> J
+    I --> J
